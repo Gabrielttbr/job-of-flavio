@@ -2,18 +2,55 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
-const routerCourse = require('./router/course.router')
+const routerCourse = require('./router/course.router');
+const cors = require('cors')
+/*==============================================================================================*/
+//                                    CONFIGURAÇÕES DE DEPENDÊNCIAS                             //
+/*==============================================================================================*/
 
 app.use(morgan('dev'));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+/*==============================================================================================*/
+//                                             CORS                                             //
+/*==============================================================================================*/
+app.use((req, res, next ) => {
+   res.header("Access-Control-Allow-Origin", "*");
+   res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+   app.use(cors());
+   next();
+   } )
 
-app.use(bodyParser.urlencoded({ extended: false })) // ACEITA APENAS DADOS SIMPLES
-app.use(bodyParser.json())// JSON DE ENTRADA BODY_PARSER
+/*==============================================================================================*/
+//                                                                                                //
+//                                              ROTAS 
+//                                                                           
+/*==============================================================================================*/
+
 app.use('/course', routerCourse)
 
-app.use((req,res,next) => { 
-    return res.status(200).send({
-        message: "Hello word"
+
+
+
+
+/*==============================================================================================*/
+//                                                                                              //
+//                           TRATAMENTO DE ERRO, CASO NÃO ENCONTRE NENHUMA ROTA                 //
+//                                                                                              //
+/*==============================================================================================*/
+
+app.use((req, res, next) => {
+    const erro = new Error('Não encontrado');
+    erro.status = 404
+    next(erro)
+})
+app.use((erro, req, res, next) => {
+    res.status(erro.status || 500)
+    res.send({
+        erroe: erro.message
     })
-});
+})
+
 
 module.exports = app;
