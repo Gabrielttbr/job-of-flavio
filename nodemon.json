@@ -1,0 +1,9 @@
+{
+    "dev": {
+        "MYSQL_USER": "root",
+        "MYSQL_PASSWORD": "root",
+        "MYSQL_DATABASE": "QIKBYTE",
+        "MYSQL_HOST": "localhost",
+        "MYSQL_PORT": "3306"
+    }
+}
