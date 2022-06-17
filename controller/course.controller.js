@@ -29,7 +29,7 @@ exports.getCourse = async (req, res, next) => {
     }
 }
 exports.patchCourse = async (req, res, next) => {
-    const id_course = req.params.id;
+    const id_course = req.body.id;
     try{
         const result = await conectionDb.execute('UPDATE CURSO SET DESCRICAO = ?,CARGA_HORARIA=? WHERE ID = ?;', 
         [req.body.descricao, req.body.carga_horaria, id_course])
@@ -48,11 +48,20 @@ exports.patchCourse = async (req, res, next) => {
 exports.deleteCourse = async (req, res, next) => {
     const id = req.body.id;
     try {
+        console.log(id)
         const result = await conectionDb.execute('delete from CURSO where ID = ?;', [id])
-        return res.status(200).send({
-            message: "Course delete with sucess",
-            results: result
-        })
+        
+        if(result.affectedRows > 0){
+            return res.status(200).send({
+                message: "Course delete with sucess",
+                results: result
+            })
+        }else{
+            return res.status(500).send({
+                message: "Erro in serve",
+  
+            })
+        }
     } catch (error) {
         return res.status(500).send({
             message: "Error in delete course",
